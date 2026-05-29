@@ -13,5 +13,5 @@ export default defineConfig({
     tailwindcss(),
     
   ],
-  base: "/Tic-Tac-Toe/"
+  base: '/Tic-Tac-Toe/'
 })
