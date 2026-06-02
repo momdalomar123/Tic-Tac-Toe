@@ -39,7 +39,12 @@ export default function GridButtons({
   void setComputerSign;
   const [computerPlaying, setComputerPlaying] = useState(false);
 
-  function playSign(event: React.MouseEvent<HTMLButtonElement>, sign: string) {
+  async function playSign(
+    event: React.MouseEvent<HTMLButtonElement>,
+    sign: string,
+  ) {
+    setComputerPlaying(true);
+
     const playedIndex = Number(event.currentTarget.id);
     console.log(event.currentTarget.id);
     const newSignButtonsOn = [...signButtonsOn];
@@ -48,11 +53,17 @@ export default function GridButtons({
     const newMoves = [...movesArray];
     newMoves[playedIndex - 1] = sign;
     setMovesArray(newMoves);
-    if (checkUserWinning(newMoves, sign)) return;
+    if (checkUserWinning(newMoves, sign)) {
+      setComputerPlaying(false);
+      return;
+    }
 
-    setTimeout(() => {
-      setComputerPlaying(!computerPlaying);
-      playComputer(newMoves, newSignButtonsOn);
+    let moveIndex: number;
+    if (getBestMoveComputer(newMoves))
+      moveIndex = Number(getBestMoveComputer(newMoves));
+    await setTimeout(() => {
+      playComputer(newMoves, newSignButtonsOn, moveIndex);
+      setComputerPlaying(false);
     }, 1000);
   }
   function checkLegalMoves(movesArray: (number | string)[]) {
@@ -64,22 +75,116 @@ export default function GridButtons({
     });
     return legalMoves;
   }
+  function getBestMoveComputer(movesArray: (number | string)[]) {
+    let index;
+    //Moves to block
+
+    if (bestMoveToBlockUser(movesArray, 0, 3, 1)) {
+      index = bestMoveToBlockUser(movesArray, 0, 3, 1);
+      return index;
+    } else if (bestMoveToBlockUser(movesArray, 3, 6, 1)) {
+      index = bestMoveToBlockUser(movesArray, 3, 6, 1);
+      return index;
+    } else if (bestMoveToBlockUser(movesArray, 6, 9, 1)) {
+      index = bestMoveToBlockUser(movesArray, 6, 9, 1);
+      return index;
+    } else if (bestMoveToBlockUser(movesArray, 0, 7, 3)) {
+      index = bestMoveToBlockUser(movesArray, 0, 7, 3);
+      return index;
+    } else if (bestMoveToBlockUser(movesArray, 1, 8, 3)) {
+      index = bestMoveToBlockUser(movesArray, 1, 8, 3);
+      return index;
+    } else if (bestMoveToBlockUser(movesArray, 2, 9, 3)) {
+      index = bestMoveToBlockUser(movesArray, 2, 9, 3);
+      return index;
+    } else if (bestMoveToBlockUser(movesArray, 0, 9, 4)) {
+      index = bestMoveToBlockUser(movesArray, 0, 9, 4);
+      return index;
+    } else if (bestMoveToBlockUser(movesArray, 2, 7, 2)) {
+      index = bestMoveToBlockUser(movesArray, 2, 7, 2);
+      return index;
+    }
+
+    //Move To Win
+
+    if (bestMoveToWinComputer(movesArray, 0, 3, 1)) {
+      index = bestMoveToWinComputer(movesArray, 0, 3, 1);
+      return index;
+    } else if (bestMoveToWinComputer(movesArray, 3, 6, 1)) {
+      index = bestMoveToWinComputer(movesArray, 3, 6, 1);
+      return index;
+    } else if (bestMoveToWinComputer(movesArray, 6, 9, 1)) {
+      index = bestMoveToWinComputer(movesArray, 6, 9, 1);
+      return index;
+    } else if (bestMoveToWinComputer(movesArray, 0, 7, 3)) {
+      index = bestMoveToWinComputer(movesArray, 0, 7, 3);
+      return index;
+    } else if (bestMoveToWinComputer(movesArray, 1, 8, 3)) {
+      index = bestMoveToWinComputer(movesArray, 1, 8, 3);
+      return index;
+    } else if (bestMoveToWinComputer(movesArray, 2, 9, 3)) {
+      index = bestMoveToWinComputer(movesArray, 2, 9, 3);
+      return index;
+    } else if (bestMoveToWinComputer(movesArray, 0, 9, 4)) {
+      index = bestMoveToWinComputer(movesArray, 0, 9, 4);
+      return index;
+    } else if (bestMoveToWinComputer(movesArray, 2, 7, 2)) {
+      index = bestMoveToWinComputer(movesArray, 2, 7, 2);
+      return index;
+    }
+  }
+  function bestMoveToBlockUser(
+    movesArray: (number | string)[],
+    iStart: number,
+    iEnd: number,
+    step: number,
+  ) {
+    let count = 0;
+    let indexMove;
+    for (let i = iStart; i < iEnd; i += step) {
+      if (movesArray[i] === sign) count++;
+      else if (movesArray[i] != computerSign) indexMove = i;
+    }
+    if (count === 2) {
+      return indexMove;
+    } else return 0;
+  }
+  function bestMoveToWinComputer(
+    movesArray: (number | string)[],
+    iStart: number,
+    iEnd: number,
+    step: number,
+  ) {
+    let count = 0;
+    let indexMove;
+    for (let i = iStart; i < iEnd; i += step) {
+      if (movesArray[i] === computerSign) count++;
+      else if (typeof movesArray[i] === "number") indexMove = i;
+    }
+    if (count >= 1) {
+      return indexMove;
+    } else return 0;
+  }
+
   function playComputer(
     movesArray: (number | string)[],
     newSignButtonsOn: boolean[],
+    moveIndex: number,
   ) {
     const legalMoves = checkLegalMoves(movesArray);
 
     const randomIndex = getRandomIndex(legalMoves);
-
-    const randomMove: number = Number(legalMoves[randomIndex]);
+    let index;
+    if (!getBestMoveComputer(movesArray))
+      index = Number(legalMoves[randomIndex]) - 1;
+    else index = moveIndex;
+    console.log("Index", index);
     const newArray = [...movesArray];
-    newArray[randomMove - 1] = computerSign;
+    newArray[index] = computerSign;
     setMovesArray(newArray);
     console.log(newArray);
     const newSignButtonsOnComputer = [...newSignButtonsOn];
-    newSignButtonsOnComputer[randomMove - 1] =
-      !newSignButtonsOnComputer[randomMove - 1];
+    newSignButtonsOnComputer[index] = !newSignButtonsOnComputer[index];
     setSignButtonsOn(newSignButtonsOnComputer);
     checkComputerWinning(newArray, computerSign);
   }
@@ -184,7 +289,7 @@ export default function GridButtons({
           <button
             className="w-full h-full cursor-pointer flex justify-center items-center"
             id={String(i + 1)}
-            disabled={signButtonsOn[i] || winning || losing}
+            disabled={signButtonsOn[i] || winning || losing || computerPlaying}
             onClick={async (event) => {
               await playSign(event, sign);
             }}
