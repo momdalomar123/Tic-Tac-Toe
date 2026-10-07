@@ -15,6 +15,8 @@ type SignWinningLosingState = {
   setSignButtonsOn: (value: boolean[]) => void;
   movesArray: (number | string)[];
   setMovesArray: (value: (number | string)[]) => void;
+  computerScore: number;
+  playerScore: number;
 };
 
 export default function Header({
@@ -30,6 +32,8 @@ export default function Header({
   setSignButtonsOn,
   movesArray,
   setMovesArray,
+  playerScore,
+  computerScore,
 }: SignWinningLosingState) {
   void setWinning;
   function checkMovesString() {
@@ -42,12 +46,23 @@ export default function Header({
       }
     });
     if (!numberFlag) return true;
+    return false;
   }
 
   return (
     <>
       <div className="text-3xl text-white flex justify-center items-center h-20 text-shadow-white flex-col animate-popOut">
-        <p className="flex mt-4">Tic-Tac-Toe</p>
+        <p className="flex mt-15 ">Tic-Tac-Toe</p>
+        <div className="flex justify-center items-center gap-5 w-full max-[522px]:text-2xl max-[450px]:text-[20px] max-[385px]:text-[17px]">
+          <div className="flex gap-2 ml-10  ">
+            <div>Player Score:</div> <div>{playerScore}</div>
+          </div>
+          <div className="border border-white h-7 "></div>
+          <div className="flex gap-2">
+            <div>Computer Score:</div>
+            <div>{computerScore}</div>
+          </div>
+        </div>
 
         {winning === true ? (
           <Winning

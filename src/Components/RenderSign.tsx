@@ -9,7 +9,7 @@ export default function RenderSign({sign}:Sign){
   return (
     <img
       src={sign == "X" ? CrossIcon : CircleIcon}
-      className="w-20 h-20"
+      className="w-20 h-20 object-contain"
     ></img>
   );
 

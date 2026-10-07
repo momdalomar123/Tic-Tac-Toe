@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RenderSign from "./RenderSign";
 type SignWinningState = {
   sign: string;
@@ -9,6 +9,10 @@ type SignWinningState = {
   setWinning: (value: boolean) => void;
   signButtonsOn: boolean[];
   setSignButtonsOn: (value: boolean[]) => void;
+  computerScore: number;
+  playerScore: number;
+  setComputerScore: (value: number) => void;
+  setPlayerScore: (value: number) => void;
 };
 type IsLosing = {
   losing: boolean;
@@ -35,9 +39,21 @@ export default function GridButtons({
   setMovesArray,
   setLosing,
   losing,
+  computerScore,
+  playerScore,
+  setComputerScore,
+  setPlayerScore,
 }: SignWinningStateMoves) {
   void setComputerSign;
   const [computerPlaying, setComputerPlaying] = useState(false);
+
+  useEffect(() => {
+    const saveScoreLocalStorage = () => {
+      localStorage.setItem("playerScore", String(playerScore));
+      localStorage.setItem("computerScore", String(computerScore));
+    };
+    saveScoreLocalStorage();
+  }, [playerScore, computerScore]);
 
   async function playSign(
     event: React.MouseEvent<HTMLButtonElement>,
@@ -55,6 +71,8 @@ export default function GridButtons({
     setMovesArray(newMoves);
     if (checkUserWinning(newMoves, sign)) {
       setComputerPlaying(false);
+      setPlayerScore(playerScore + 1);
+
       return;
     }
 
@@ -78,27 +96,59 @@ export default function GridButtons({
   function getBestMoveComputer(movesArray: (number | string)[]) {
     let index;
     //Moves to block
-
-    if (bestMoveToBlockUser(movesArray, 0, 3, 1)) {
+    if (bestMoveToWinComputer(movesArray, 0, 3, 1)) {
+      index = bestMoveToWinComputer(movesArray, 0, 3, 1);
+      return index;
+    } else if (bestMoveToBlockUser(movesArray, 0, 3, 1)) {
       index = bestMoveToBlockUser(movesArray, 0, 3, 1);
+      return index;
+    }
+    if (bestMoveToWinComputer(movesArray, 3, 6, 1)) {
+      index = bestMoveToWinComputer(movesArray, 3, 6, 1);
       return index;
     } else if (bestMoveToBlockUser(movesArray, 3, 6, 1)) {
       index = bestMoveToBlockUser(movesArray, 3, 6, 1);
       return index;
+    }
+    if (bestMoveToWinComputer(movesArray, 6, 9, 1)) {
+      index = bestMoveToWinComputer(movesArray, 6, 9, 1);
+      return index;
     } else if (bestMoveToBlockUser(movesArray, 6, 9, 1)) {
       index = bestMoveToBlockUser(movesArray, 6, 9, 1);
+      return index;
+    }
+    if (bestMoveToWinComputer(movesArray, 0, 7, 3)) {
+      index = bestMoveToWinComputer(movesArray, 0, 7, 3);
       return index;
     } else if (bestMoveToBlockUser(movesArray, 0, 7, 3)) {
       index = bestMoveToBlockUser(movesArray, 0, 7, 3);
       return index;
+    }
+
+    if (bestMoveToWinComputer(movesArray, 1, 8, 3)) {
+      index = bestMoveToWinComputer(movesArray, 1, 8, 3);
+      return index;
     } else if (bestMoveToBlockUser(movesArray, 1, 8, 3)) {
       index = bestMoveToBlockUser(movesArray, 1, 8, 3);
+      return index;
+    }
+
+    if (bestMoveToWinComputer(movesArray, 2, 9, 3)) {
+      index = bestMoveToWinComputer(movesArray, 2, 9, 3);
       return index;
     } else if (bestMoveToBlockUser(movesArray, 2, 9, 3)) {
       index = bestMoveToBlockUser(movesArray, 2, 9, 3);
       return index;
+    }
+    if (bestMoveToWinComputer(movesArray, 0, 9, 4)) {
+      index = bestMoveToWinComputer(movesArray, 0, 9, 4);
+      return index;
     } else if (bestMoveToBlockUser(movesArray, 0, 9, 4)) {
       index = bestMoveToBlockUser(movesArray, 0, 9, 4);
+      return index;
+    }
+    if (bestMoveToWinComputer(movesArray, 2, 7, 2)) {
+      index = bestMoveToWinComputer(movesArray, 2, 7, 2);
       return index;
     } else if (bestMoveToBlockUser(movesArray, 2, 7, 2)) {
       index = bestMoveToBlockUser(movesArray, 2, 7, 2);
@@ -106,32 +156,6 @@ export default function GridButtons({
     }
 
     //Move To Win
-
-    if (bestMoveToWinComputer(movesArray, 0, 3, 1)) {
-      index = bestMoveToWinComputer(movesArray, 0, 3, 1);
-      return index;
-    } else if (bestMoveToWinComputer(movesArray, 3, 6, 1)) {
-      index = bestMoveToWinComputer(movesArray, 3, 6, 1);
-      return index;
-    } else if (bestMoveToWinComputer(movesArray, 6, 9, 1)) {
-      index = bestMoveToWinComputer(movesArray, 6, 9, 1);
-      return index;
-    } else if (bestMoveToWinComputer(movesArray, 0, 7, 3)) {
-      index = bestMoveToWinComputer(movesArray, 0, 7, 3);
-      return index;
-    } else if (bestMoveToWinComputer(movesArray, 1, 8, 3)) {
-      index = bestMoveToWinComputer(movesArray, 1, 8, 3);
-      return index;
-    } else if (bestMoveToWinComputer(movesArray, 2, 9, 3)) {
-      index = bestMoveToWinComputer(movesArray, 2, 9, 3);
-      return index;
-    } else if (bestMoveToWinComputer(movesArray, 0, 9, 4)) {
-      index = bestMoveToWinComputer(movesArray, 0, 9, 4);
-      return index;
-    } else if (bestMoveToWinComputer(movesArray, 2, 7, 2)) {
-      index = bestMoveToWinComputer(movesArray, 2, 7, 2);
-      return index;
-    }
   }
   function bestMoveToBlockUser(
     movesArray: (number | string)[],
@@ -161,7 +185,7 @@ export default function GridButtons({
       if (movesArray[i] === computerSign) count++;
       else if (typeof movesArray[i] === "number") indexMove = i;
     }
-    if (count >= 1) {
+    if (count >= 2) {
       return indexMove;
     } else return 0;
   }
@@ -186,7 +210,9 @@ export default function GridButtons({
     const newSignButtonsOnComputer = [...newSignButtonsOn];
     newSignButtonsOnComputer[index] = !newSignButtonsOnComputer[index];
     setSignButtonsOn(newSignButtonsOnComputer);
-    checkComputerWinning(newArray, computerSign);
+    if (checkComputerWinning(newArray, computerSign)) {
+      setComputerScore(computerScore + 1);
+    }
   }
   function checkUserWinning(movesArray: (number | string)[], sign: string) {
     if (winningCaseOne(movesArray, sign)) {
@@ -204,10 +230,19 @@ export default function GridButtons({
     }
   }
   function checkComputerWinning(movesArray: (number | string)[], sign: string) {
-    if (winningCaseOne(movesArray, sign)) setLosing(true);
-    else if (winningCaseTwo(movesArray, sign)) setLosing(true);
-    else if (winningCaseThree(movesArray, sign)) setLosing(true);
-    else if (winningCaseFour(movesArray, sign)) setLosing(true);
+    if (winningCaseOne(movesArray, sign)) {
+      setLosing(true);
+      return true;
+    } else if (winningCaseTwo(movesArray, sign)) {
+      setLosing(true);
+      return true;
+    } else if (winningCaseThree(movesArray, sign)) {
+      setLosing(true);
+      return true;
+    } else if (winningCaseFour(movesArray, sign)) {
+      setLosing(true);
+      return true;
+    }
   }
 
   function winningCaseOne(movesArray: (number | string)[], sign: string) {
@@ -280,11 +315,11 @@ export default function GridButtons({
   }
 
   return (
-    <div className="grid grid-cols-3 grid-rows-3 gap-3 text-white text-3xl animate-popOut">
+    <div className="grid grid-cols-3 grid-rows-3 gap-3 text-white text-3xl animate-popOut border-b-3 border-t-3 border-r border-l  border-white/20 p-5 rounded-lg bg-white/15  ">
       {[...Array(9)].map((_, i) => (
         <div
           key={i}
-          className="bg-blue-400 w-32 h-32 shadow-[10px_7px_0_1px_rgba(0,100,255,0.5)] transition-all hover:bg-blue-500 hover:text-blue-200 rounded-2xl hover:shadow-[10px_7px_0_1px_rgba(0,70,255,0.5)] active:translate-2 active:shadow-none animate-popOut"
+          className="bg-blue-400 w-32 h-32 shadow-[10px_7px_0_1px_rgba(0,100,255,0.5)] transition-all hover:bg-blue-500 hover:text-blue-200 rounded-2xl hover:shadow-[10px_7px_0_1px_rgba(0,70,255,0.5)] active:translate-2 active:shadow-none animate-popOut max-[460px]:w-28 max-[460px]:h-28 max-[400px]:w-22 max-[400px]:h-22"
         >
           <button
             className="w-full h-full cursor-pointer flex justify-center items-center"

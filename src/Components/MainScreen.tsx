@@ -11,8 +11,14 @@ type Sign = {
 export default function MainScreen({sign,setSign,computerSign,setComputerSign}:Sign) {
  const [winning,setWinning]=useState(false)
  const [losing,setLosing]=useState(false)
+ const [playerScore,setPlayerScore] = useState(localStorage.getItem("playerScore") ? Number(localStorage.getItem("playerScore"))
+ :0)
+ const [computerScore,setComputerScore] = useState(localStorage.getItem("computerScore") ? Number(localStorage.getItem("computerScore")):0)
+
    const [signButtonsOn, setSignButtonsOn] = useState(Array(9).fill(false));
     const [movesArray,setMovesArray]=useState<(string|number)[]>([...Array(9)].map((_,i)=>{return i+1}));
+
+   
   return (
     <>
       <Header 
@@ -27,8 +33,10 @@ export default function MainScreen({sign,setSign,computerSign,setComputerSign}:S
       movesArray={movesArray}
       setMovesArray={setMovesArray}
       losing={losing}
-      setLosing={setLosing}/>
-      <div className="container flex justify-center items-center h-120 ">
+      setLosing={setLosing}
+      computerScore={computerScore}
+      playerScore={playerScore}/>
+      <div className="flex mt-20 justify-center items-center h-120  ">
         <GridButtons 
         sign={sign}
         setSign={setSign}
@@ -41,7 +49,12 @@ export default function MainScreen({sign,setSign,computerSign,setComputerSign}:S
         movesArray={movesArray}
         setMovesArray={setMovesArray}
         losing={losing}
-        setLosing={setLosing}/>
+        setLosing={setLosing}
+        computerScore={computerScore}
+        setComputerScore={setComputerScore}
+        playerScore={playerScore}
+        setPlayerScore={setPlayerScore}
+        />
       
       </div>
       
